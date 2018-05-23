@@ -14,7 +14,7 @@ import java.util.concurrent.Callable;
  * @version MK13
  */
 
-public class TSPNearestAndSimulatedAnnealingMK3 implements TSP, Callable<Route>{
+public class TSPSimulatedAnnealingMK3 implements TSP, Callable<Route>{
     /**
      * cooling rate for simulated anneling.
      */
@@ -51,7 +51,7 @@ public class TSPNearestAndSimulatedAnnealingMK3 implements TSP, Callable<Route>{
      * @param endPosition
      * @param remainingMushrooms from Typ Set of Position
      */
-    public TSPNearestAndSimulatedAnnealingMK3(Position startPosition, Position endPosition,Set<Position> remainingMushrooms){
+    public TSPSimulatedAnnealingMK3(Position startPosition, Position endPosition,Set<Position> remainingMushrooms){
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.iterations = remainingMushrooms.size()*2000;

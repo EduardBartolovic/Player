@@ -7,6 +7,7 @@ import edu.hm.bartolov.se2.miner.player.tool.ImageMapMK2;
 import edu.hm.bartolov.se2.miner.player.tsp.TSPBruteForceIntelligentMK5;
 import edu.hm.bartolov.se2.miner.player.tsp.TSPNearestMushroomRouteMK4;
 import edu.hm.bartolov.se2.miner.player.tsp.TSPTabuSearch;
+import edu.hm.bartolov.se2.miner.player.tsp.tools.TSPIntelligentNearestMushroom;
 import edu.hm.cs.rs.se2.miner.common.Position;
 import edu.hm.cs.rs.se2.miner.player.Player;
 import edu.hm.cs.rs.se2.miner.ruler.Ruler;
@@ -33,6 +34,8 @@ public class BoatyMcBoatFaceMK19 implements Player {
      * how much time is acceptable to calculate the perfect way.
      */
     private static final int MUSHROOMTHRESHOLD = 50;
+    
+    private static final int NUMBEROFCORES = 6;
     /**
      * SpielRegeln.
      */
@@ -82,7 +85,7 @@ public class BoatyMcBoatFaceMK19 implements Player {
             new BoatyMcBoatFaceMK2MovePart(map,nearestMushRoute(),ruler).move();// find mushrooms an go to Destination
             
         }else{   // if less than MUSHROOMTHRESHOLD Mushroom on map##################
-            System.out.println("simulatedAnnealing");
+            System.out.println("tabusearch");
             new BoatyMcBoatFaceMK2MovePart(map,tabuSearch(mushrooms.size(),5000),ruler).move();// find mushrooms an go to Destination
             //new BoatyMcBoatFaceMK2MovePart(map,nearestAndSimulatedAnnealing(),ruler).move();// find mushrooms an go to Destination
             
@@ -136,14 +139,15 @@ public class BoatyMcBoatFaceMK19 implements Player {
      * use nearest Methode when too many Mushrooms.
      */
     private Route nearestMushRoute(){
+        //return new TSPIntelligentNearestMushroom(startPosition,endPosition,mushrooms).getRoute();
         return new TSPNearestMushroomRouteMK4(startPosition,endPosition,mushrooms).getRoute();
     }
     
     private Route tabuSearch(int radius, int iterations){
-        final ExecutorService executor = Executors.newFixedThreadPool(4);
+        final ExecutorService executor = Executors.newFixedThreadPool(NUMBEROFCORES);
         final Callable<Route> task = new TSPTabuSearch(startPosition, endPosition,mushrooms,radius,iterations);
-        final Future<Route>[] list = new Future[4];
-        for(int i=0; i< 4; i++){
+        final Future<Route>[] list = new Future[NUMBEROFCORES];
+        for(int i=0; i< NUMBEROFCORES; i++){
             //submit Callable tasks to be executed by thread pool
             list[i] = executor.submit(task);//add Future to the array
         }
